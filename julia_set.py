@@ -1,6 +1,8 @@
 import time
 import numpy as np
 from functools import wraps
+import matplotlib.pyplot as plt
+import line_profiler
 
 def timefn(fn):
     @wraps(fn)
@@ -13,10 +15,10 @@ def timefn(fn):
     return measure_time
 
 # area of complex space to investigate
-x1,x2,y1,y2 = -1.8, 1.8, -1.8, 1.8
+x1,x2,y1,y2 = -2, 2, -2, 2
 c_real, c_imag = -0.62772, -0.42193
 
-@timefn
+
 def calculate_z_serial_purepython(maxiter, zs, cs):
     output = [0] * len(zs)
     for i in range(len(zs)):
@@ -55,9 +57,13 @@ def calc_pure_python(desired_width, max_iterations):
     print("Total elements:", len(zs))
     start_time = time.time()
     output = calculate_z_serial_purepython(max_iterations, zs, cs)
-    print(np.shape(output))
     secs = time.time() - start_time
     print(calculate_z_serial_purepython.__name__ + " took", secs, "seconds")
+    return output
 
 if __name__ == "__main__":
-    calc_pure_python(desired_width=1000, max_iterations=300)
+    output = calc_pure_python(desired_width=5000, max_iterations=300)
+    re_shaped_output = np.reshape(output, (5001, 5001))
+    plt.imshow(re_shaped_output, cmap='hot', interpolation='nearest')
+    plt.show()
+    
